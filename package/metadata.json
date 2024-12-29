@@ -1,0 +1,21 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "simon.brummer@posteo.de",
+                "Name": "Simon Brummer"
+            }
+        ],
+        "Category": "Examples",
+        "Description": "Small example to showcase a Plasmoid with a Rust backend",
+        "EnabledByDefault": true,
+        "Icon": "applications-system",
+        "Id": "bcdt.rust_backend_example",
+        "License": "MPL 2.0",
+        "Name": "Black Cat Desktop Toys: Rust backend example",
+        "Version": "1.0",
+        "Website": "https://github.com/brummer-simon/rust_plasmoid_example"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
