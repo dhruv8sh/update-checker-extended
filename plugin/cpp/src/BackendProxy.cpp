@@ -3,20 +3,24 @@
 BackendProxy::BackendProxy(QObject *parent)
     : QObject{parent}, _backend{rust::make_backend()} {}
 
-qint32 BackendProxy::number() const { return _backend->number(); }
+//void BackendProxy::isBusy(bool inp) const {
+//    if (_backend->is_busy() != inp) {
+//        _backend->set_busy()
+//        Q_EMIT isBusyChanged(_backend->isBusy());
+//    }
+//}
+//void BackendProxy::isError(bool inp) const {
+//    if (_backend->is_error() != inp) {
+//        Q_EMIT isErrorChanged(_backend->is_error());
+//    }
+//}
 
-void BackendProxy::setNumber(qint32 number) {
-  if (_backend->number() != number) {
-    _backend->set_number(number);
-
-    Q_EMIT numberChanged(_backend->number());
-  }
+//void BackendProxy::msg() const {
+//    Q_EMIT msgChanged(_backend->get_msg());
+//}
+QString BackendProxy::getMsg() const {
+    rust::cxxbridge1::String rustStr = _backend->msg();
+    std::string stdStr(rustStr.begin(), rustStr.end());
+    return QString::fromStdString(stdStr);
 }
-
-void BackendProxy::incrementNumber() {
-  _backend->increment_number();
-
-  Q_EMIT numberChanged(_backend->number());
-}
-
 #include "moc_BackendProxy.cpp"

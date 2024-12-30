@@ -1,43 +1,96 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-//
-// Author: Simon Brummer (simon.brummer@posteo.de)
-// Description: Rust backend library entry point
+use std::fmt::Display;
 
 #[cxx::bridge(namespace = "rust")]
 mod ffi {
     extern "Rust" {
         type Backend;
-
-        fn number(&self) -> i32;
-        fn set_number(&mut self, number: i32);
-        fn increment_number(&mut self);
-
         fn make_backend() -> Box<Backend>;
+        fn is_busy(&self) -> bool;
+        fn is_error(&self) -> bool;
+        fn msg(&self) -> String;
     }
 }
-
 #[derive(Default)]
 pub struct Backend {
-    number: i32,
+    state: State,
+    updates_available: Vec<Package>
+}
+struct Package {
+    name: String,
+}
+#[derive(Default)]
+enum State {
+    Busy(BusyType),
+    #[default]
+    Idle,
+    Error(CustomError),
+}
+enum BusyType {
+    FetchingUpdate(PackageType),
+    RemovingPackage(PackageType, String),
+    InstallingPackage(PackageType, String),
+    UpdatingSystem,
+    Calculating,
+    MultipleProcesses,
+}
+enum PackageType {
+    Flatpak,
+    AUR,
+    Arch(String),
+    All,
+    Unknown,
+}
+enum CustomError {}
+impl Display for PackageType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
+            PackageType::Flatpak => "Flatpak".to_string(),
+            PackageType::AUR => "AUR".to_string(),
+            PackageType::Arch(repo) => repo.to_string(),
+            PackageType::All => "All".to_string(),
+            PackageType::Unknown => "`Unknown`".to_string(),
+        };
+        write!(f, "{}", str)
+    }
 }
 
+
 impl Backend {
-    pub fn number(&self) -> i32 {
-        self.number
+    pub fn msg(&self) -> String {
+        match &self.state {
+            State::Busy(busy_type) => match busy_type {
+                BusyType::FetchingUpdate(pkg_type) => format!("checking {} updates", pkg_type),
+                BusyType::RemovingPackage(pkg_type, name) => format!("Removing {} Package: {}", pkg_type, name),
+                BusyType::InstallingPackage(pkg_type, name) => format!("Installing {} Package: {}", pkg_type, name),
+                BusyType::UpdatingSystem => "Updating System".to_string(),
+                BusyType::Calculating => "Calculating...".to_string(),
+                BusyType::MultipleProcesses => "Multiple Operations in Progress".to_string(),
+            },
+            State::Idle => if self.updates_available.is_empty() { String::from("Bruh!") }
+                else { format!("{} updates available", self.updates_available.len()) }
+            State::Error(err) => format!("Error: {}\nCode:{}", err, err.code()),
+        }
     }
+    pub fn is_busy(&self) -> bool {
+        matches!(&self.state, State::Busy(_))
+    }
+    pub fn is_error(&self) -> bool {
+        matches!(&self.state, State::Error(_))
+    }
+}
 
-    pub fn set_number(&mut self, number: i32) {
-        self.number = number
+impl Display for CustomError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Some error occured!! Error list unimplemented")
     }
-
-    pub fn increment_number(&mut self) {
-        self.set_number(self.number + 1)
-    }
+}
+impl CustomError {
+    fn code(&self) -> i32 { -1 }
 }
 
 pub fn make_backend() -> Box<Backend> {
-    Box::<Backend>::default()
+    Box::<Backend>::default()// from config
 }
-
+pub fn fetch_updates() {
+    todo!()
+}

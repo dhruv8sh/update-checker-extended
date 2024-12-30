@@ -1,9 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-#
-# Author: Simon Brummer (simon.brummer@posteo.de)
-
 BUILD_TYPE ?= Release
 BUILD_RELEASE_DIR ?= build_release
 BUILD_DEBUG_DIR ?= build_debug
@@ -71,11 +65,11 @@ $(error Unknown build type: "$(BUILD_TYPE)")
 endif
 
 uninstall:
-	sudo rm -rf /usr/share/plasma/plasmoids/bcdt.rust_backend_example
-	sudo rm -rf /usr/lib/qt6/qml/bcdt/rust_backend_example
+	sudo rm -rf /usr/share/plasma/plasmoids/org.dhruv8sh.updateCheckerExtended
+	sudo rm -rf /usr/lib/qt6/qml/dhruv8sh/updateCheckerExtended
 
 run:
-	plasmoidviewer -a bcdt.rust_backend_example
+	plasmoidviewer -a org.dhruv8sh.updateCheckerExtended
 
 .PHONY:\
 	help\

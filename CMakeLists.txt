@@ -1,9 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-#
-# Author: Simon Brummer (simon.brummer@posteo.de)
-
 cmake_minimum_required(VERSION 3.24)
 
 project(plasma_rust_backend)
@@ -34,7 +28,7 @@ find_package(Qt6 ${QT6_MIN_VERSION} CONFIG REQUIRED COMPONENTS
 )
 
 # Project properties
-set(PLASMOID_NAME        "bcdt.rust_backend_example")
+set(PLASMOID_NAME        "org.dhruv8sh.updateCheckerExtended")
 
 set(PLUGIN_NAME          "plugin")
 set(PLUGIN_URI           "${PLASMOID_NAME}")
@@ -42,14 +36,14 @@ set(PLUGIN_DIR           "${CMAKE_SOURCE_DIR}/${PLUGIN_NAME}/cpp")
 set(PLUGIN_SOURCE_DIR    "${PLUGIN_DIR}/src")
 set(PLUGIN_ARTIFACT_QML  "${PLUGIN_DIR}/qmldir")
 set(PLUGIN_ARTIFACT      "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/lib${PLUGIN_NAME}.so")
-set(PLUGIN_INSTALL_DIR   "${KDE_INSTALL_QMLDIR}/bcdt/rust_backend_example")
+set(PLUGIN_INSTALL_DIR   "${KDE_INSTALL_QMLDIR}/dhruv8sh/updateCheckerExtended")
 
 set(BINDINGS_NAME        "cxxbridge_autogen")
 set(BINDINGS_DIR         "${CMAKE_BINARY_DIR}/${BINDINGS_NAME}")
 set(BINDINGS_INCLUDE_DIR "${BINDINGS_DIR}/include/cxxbridge")
 set(BINDINGS_SOURCE_DIR  "${BINDINGS_DIR}/src")
 
-set(CRATE_NAME           "plugin_impl")
+set(CRATE_NAME           "updateCheckerExtendedPlugin")
 set(CRATE_SOURCE_DIR     "${CMAKE_SOURCE_DIR}/plugin/rust/src")
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
@@ -80,7 +74,6 @@ add_custom_target(
 )
 
 # Plugin (Rust part) target
-
 corrosion_import_crate(
     MANIFEST_PATH plugin/rust/Cargo.toml
     CRATES ${CRATE_NAME}

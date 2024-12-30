@@ -1,27 +1,14 @@
 [package]
-name = "plugin_impl"
+name = "updateCheckerExtendedPlugin"
 version = "0.1.0"
 authors = [
-    "Simon Brummer <simon.brummer@posteo.de>"
+    "Dhruvesh Surolia <dhruv8sh@proton.me>"
 ]
 edition = "2021"
-license = "MPL-2.0"
-
-[profile.dev]
-opt-level = 0
-strip = "none"
-debug-assertions = true
-overflow-checks = true
-
-[profile.release]
-opt-level = 3
-strip = "debuginfo"
-debug-assertions = false
-overflow-checks = false
 
 [lib]
-name = "plugin_impl"
+name = "updateCheckerExtendedPlugin"
 crate-type = ["staticlib"]
 
 [dependencies]
-cxx = "1.0"
+cxx = "1.0.136"

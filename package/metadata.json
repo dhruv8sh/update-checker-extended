@@ -3,19 +3,19 @@
     "KPlugin": {
         "Authors": [
             {
-                "Email": "simon.brummer@posteo.de",
-                "Name": "Simon Brummer"
+                "Email": "dhruv8sh@proton.me",
+                "Name": "Dhruvesh Surolia"
             }
         ],
-        "Category": "Examples",
-        "Description": "Small example to showcase a Plasmoid with a Rust backend",
+        "Category": "Utility",
+        "Description": "Available updates on your fingertips",
         "EnabledByDefault": true,
         "Icon": "applications-system",
-        "Id": "bcdt.rust_backend_example",
+        "Id": "org.dhruv8sh.updateCheckerExtended",
         "License": "MPL 2.0",
-        "Name": "Black Cat Desktop Toys: Rust backend example",
-        "Version": "1.0",
-        "Website": "https://github.com/brummer-simon/rust_plasmoid_example"
+        "Name": "Update Checker Extended",
+        "Version": "0.1.0",
+        "Website": "https://github.com/dhruv8sh/update-checker-extended"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

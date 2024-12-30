@@ -1,18 +1,24 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-//
-// Author: Simon Brummer (simon.brummer@posteo.de)
-// Description: The Configuration dialog.
+import org.kde.plasma.configuration
 
-import QtQuick 6.0
-
-import org.kde.plasma.configuration 2.0 as PlasmaConfig
-
-PlasmaConfig.ConfigModel {
-    PlasmaConfig.ConfigCategory {
-        name: i18n("General")
+ConfigModel {
+    ConfigCategory {
+        name: i18n("Package Management")
+        icon: "akonadi-symbolic"
+        source: "Config/configPacman.qml"
+    }
+    ConfigCategory {
+        name: i18n("Behavior")
         icon: "configure"
-        source: "config_general.qml"
+        source: "Config/configBehavior.qml"
+    }
+    ConfigCategory {
+        name: i18n("Appearance")
+        icon: "preferences-desktop-theme-global"
+        source: "Config/configAppearance.qml"
+    }
+    ConfigCategory {
+        name: i18n("Debug")
+        icon: "data-warning"
+        source: "Config/configUnsafe.qml"
     }
 }

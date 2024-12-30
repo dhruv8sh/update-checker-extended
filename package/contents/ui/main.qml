@@ -1,49 +1,89 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-//
-// Author: Simon Brummer (simon.brummer@posteo.de)
-// Description: Widget used to read/write data from the Qml Extension
-//              that is implemented in Rust.
-
-import QtQuick 6.0
-import QtQuick.Layouts 6.0
-import org.kde.plasma.plasmoid 2.0
-import org.kde.kirigami as Kirigami
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents
-import bcdt.rust_backend_example 1.0
+import QtQuick
+import QtQuick.Layouts
+import org.kde.plasma.plasmoid
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PlasmaComponent
+import org.kde.plasma.plasma5support as Plasma5Support
+import org.kde.notification
+import "../Util.js" as Util
+import "./Compact/" as Compact
+import dhruv8sh.updateCheckerExtended
 
 PlasmoidItem {
-    id: root
+    id: main
+    property string subtext: i18n("Updates")
+    property string title: title
+    property bool isNotPaused: true
+    compactRepresentation: Compact.CompactRepresentation { }
+    fullRepresentation:  Full{}
+    switchWidth: 300
+    switchHeight: 300
+    height: 50
+    width: 50
 
-    Component.onCompleted: {
-        Backend.number = plasmoid.configuration.counterStartValue
-    }
+    ListModel { id: packageModel }
+    PackageManager{ id: packageManager }
 
-    fullRepresentation: ColumnLayout {
-        anchors.fill: parent
+    property bool isBusy: false
+    property string error: ""
+    property bool showAllowSingleModifications: false
+    property bool showNotification: false
+    property bool missingDependency: false
+    property bool selectMode: false
+    property var cfg: plasmoid.configuration
+    property string statusMessage: Backend.getMsg
+    property string statusIcon: ""
+    property string notifText: ""
+    property double downloadSize: 0
+    property int notifDiff: 0
+    signal pop();
 
-        PlasmaComponents.Label {
-            Layout.alignment: Qt.AlignCenter
-            text: i18n("Click Counter: %1", Backend.number)
+    toolTipMainText: i18n("Arch Update Checker")
+    toolTipSubText: statusMessage
+    Plasmoid.status: (packageModel.count >= cfg.activeAmount || isBusy || error !== "") ? PlasmaCore.Types.ActiveStatus : PlasmaCore.Types.PassiveStatus
+    Timer {
+        id: timer
+        interval: cfg.pollInterval * 1000 * 60
+        running: isNotPaused
+        repeat: true
+        onTriggered: {
+            showNotification = cfg.useNotifications
+            Util.commands["checkUpdates"].run()
         }
-
-        Row {
-            spacing: 10
-
-            PlasmaComponents.Button {
-                Layout.alignment: Qt.AlignCenter
-                text: i18n("Click Me")
-                onClicked: Backend.incrementNumber()
-            }
-
-            PlasmaComponents.Button {
-                Layout.alignment: Qt.AlignCenter
-                text: i18n("Reset")
-                onClicked: Backend.number = plasmoid.configuration.counterStartValue
-            }
-        }
     }
+    Notification {
+        id: notif
+        componentName: "archupdatechecker"
+        eventId: "sound"
+        title: {
+            if( notifDiff > 0 ) return "+"+notifDiff+" new update"+(notifDiff==1?"":"s")+" available! \n Total: "+packageModel.count;
+            else return packageModel.count + " updates available!"
+        }
+        text: notifText
+    }
+    Timer {
+        id: startupTimer
+        interval: 5000
+        onTriggered: if(!missingDependency) Util.commands["checkUpdates"].run()
+        running: false
+        repeat: false
+    }
+    Component.onCompleted : () => {
+        Util.notificationInstall()
+        Util.checkDependency("pacinfo")
+        Util.checkDependency("checkupdates")
+        if( cfg.searchOnStart ) startupTimer.start()
+    }
+    Plasmoid.contextualActions: [
+        PlasmaCore.Action {
+            text: i18n("Update System")
+            icon.name: "install-symbolic"
+            onTriggered: Util.updateSystem()
+        },
+        PlasmaCore.Action {
+            text: i18n("Check for Updates")
+            icon.name: "view-refresh"
+            onTriggered: Util.commands["checkUpdates"].run()
+        }
+    ]
 }
-
